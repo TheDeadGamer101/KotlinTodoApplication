@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     // private list variables
     private var todos : ArrayList<Todo> = ArrayList()
     private var taskList: LinearLayout? = null
+    private var localStorage : LS = LS()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,11 +23,7 @@ class MainActivity : AppCompatActivity() {
         // get the taskList to add the tasks to
         taskList = findViewById(R.id.todoList)
 
-        // placeholder tasks for preview
-        todos.add(Todo("test",false))
-        todos.add(Todo("lel",true))
-        todos.add(Todo("lel",true))
-        todos.add(Todo("lel",true))
+        todos = ArrayList(localStorage.loadData(this))
 
         populateTaskList()
 
@@ -44,7 +41,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.addTaskConfirmButton).setOnClickListener {
             findViewById<LinearLayout>(R.id.addTaskContainer).visibility = View.GONE
 
-            createNewTask()
+            if (findViewById<EditText>(R.id.taskNameField).text.toString() != "")
+                createNewTask()
 
             findViewById<EditText>(R.id.taskNameField).hideKeyboard()
 
@@ -63,14 +61,16 @@ class MainActivity : AppCompatActivity() {
         todos.clear()
 
         populateTaskList()
+        localStorage.saveData(todos, this)
     }
 
     // add new task to the list
     private fun createNewTask(){
-        var text = findViewById<EditText>(R.id.taskNameField).text.toString()
+        val text = findViewById<EditText>(R.id.taskNameField).text.toString()
         todos.add(Todo(text,false))
 
         populateTaskList()
+        localStorage.saveData(todos, this)
     }
 
     // Populate the task list
@@ -87,9 +87,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // function for hiding keyboard in a single view
-    fun View.hideKeyboard() {
+    private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
+
+
+
 
 }

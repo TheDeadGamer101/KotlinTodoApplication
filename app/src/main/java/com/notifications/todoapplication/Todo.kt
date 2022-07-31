@@ -7,11 +7,15 @@ class Todo(private var text: String, private var isDone: Boolean) {
         return this.text
     }
 
-    fun setText(text : String){
-        this.text = text
-    }
-
     fun getIsDone() : Boolean{
         return isDone
+    }
+
+    fun setIsDone(){
+        isDone = true
+    }
+
+    override fun toString(): String {
+        return "[$text,$isDone]"
     }
 }
